@@ -62,21 +62,21 @@ flags.DEFINE_bool(
     "models and False for cased models.")
 
 flags.DEFINE_integer(
-    "max_seq_length", 50,
+    "max_seq_length", 256,
     "The maximum total input sequence length after WordPiece tokenization. "
     "Sequences longer than this will be truncated, and sequences shorter "
     "than this will be padded.")
 
 flags.DEFINE_bool("do_train", True, "Whether to run training.")
 
-flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
+flags.DEFINE_bool("do_eval", True, "Whether to run eval on the dev set.")
 
 flags.DEFINE_bool(
-    "do_predict", False,
+    "do_predict", True,
     "Whether to run the model in inference mode on the test set.")
 
 flags.DEFINE_bool(
-    "do_export_savedmodel", False,
+    "do_export_savedmodel", True,
     "Whether to export saved model or not")
 
 flags.DEFINE_string(
@@ -229,12 +229,12 @@ class QGProcessor(DataProcessor):
     def get_dev_examples(self, data_dir):
         """See base class."""
         return self._create_examples(
-            self._read_csv(os.path.join(data_dir, "dev.csv")), "dev")
+            self._read_csv(os.path.join(data_dir, "train.csv")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
         return self._create_examples(
-            self._read_csv(os.path.join(data_dir, "test.csv")), "test")
+            self._read_csv(os.path.join(data_dir, "train.csv")), "test")
 
     def _create_examples(self, df, set_type):
         """Creates examples for the training and dev sets."""
@@ -260,7 +260,7 @@ class QGProcessor(DataProcessor):
     def _create_test_results(self, data_dir, output_predict_file,
                              question_predictions):
         """Creates test_results csv from model predictions"""
-        df = self._read_csv(os.path.join(data_dir, "test.csv"))
+        df = self._read_csv(os.path.join(data_dir, "train.csv"))
         df['generated'] = question_predictions
 
         df.to_csv(output_predict_file, index=False)
