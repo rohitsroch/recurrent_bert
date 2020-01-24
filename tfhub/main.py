@@ -117,16 +117,13 @@ def prepare_data(file_path=file_path):
 		op_ids = tf.keras.utils.to_categorical(np.array([op_ids]), num_classes=tokenizer.get_vocab_size())
 		data_x.append([np.array([ip_ids]), np.array([ip_masks]), np.array([ip_segs])])
 		data_y.append(op_ids)
-	data_x = data_x.numpy()
-	data_y = data_y.numpy()
+	data_x = np.array(data_x)
+	data_y = np.array(data_y)
 	print(data_x.shape, data_y.shape)
-	# with open(file_path, 'r') as f:
-	#   reader = csv.reader(f)
-	#   your_list = list(reader)
-	# print(your_list)
-	# print(your_list[1][1])
-#prepare_data()
-
+	print(data_x[0].shape)
+	print(data_x[0][0].shape)
+	print(data_x[0][0][0].shape)
+	return data_x, data_y
 
 def train(iptokens, optokens, model: tf.keras.Model, num_epochs=5, batch_size=1, max_seq_length=max_seq_length):
 
@@ -163,8 +160,9 @@ def inference(iptokens, model: tf.keras.Model, max_seq_length=max_seq_length):
 			dec_ques = dec_ques + tokenizer.convert_ids_to_tokens([output[0][i]])
 	return dec_ques
 
-iptokens1, optokens1 = tokenize_a_sample(ques_con=qc, ans=ans1, ques=q1)
-iptokens2 = tokenize_a_pair(ques_con=qc, ans=ans2)
+iptokens1, optokens1 = tokenize_a_sample(context=qc, ans=ans1, ques=q1)
+iptokens2 = tokenize_a_pair(context=qc, ans=ans2)
+# prepare_data()
 # model = build(max_seq_length)
 # train(iptokens=iptokens1, optokens=optokens1, model=model, num_epochs=10)
 # print(inference(iptokens=iptokens2, model=model))
